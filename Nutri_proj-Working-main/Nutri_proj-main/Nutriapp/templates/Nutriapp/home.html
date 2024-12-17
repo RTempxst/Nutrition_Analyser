@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Analyzer</title>
+    <link rel="stylesheet" href="{% static 'css/design_for_home.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Nutrition Calculator</h1>
+
+        <!-- Search Form -->
+        <form method="post" class="search-form">
+            {% csrf_token %}
+            <input type="text" name="ingredient" placeholder="Enter an ingredient (e.g., 1 apple)" required>
+            <button type="submit">Add to List</button>
+        </form>
+
+        <!-- Error Message -->
+        {% if error_message %}
+            <div class="error-message">
+                <p>{{ error_message }}</p>
+            </div>
+        {% endif %}
+
+<!-- Ingredient List -->
+{% if ingredient_list %}
+    <h2>Ingredient List</h2>
+    <ul class="ingredient-list">
+        {% for food in ingredient_list %}
+            <li>
+                <strong>{{ food.quantity }} {{ food.food_name|title }}</strong> - 
+                Calories: {{ food.nf_calories|floatformat:2 }} kcal | 
+                Fat: {{ food.nf_total_fat|floatformat:2 }} g | 
+                Protein: {{ food.nf_protein|floatformat:2 }} g | 
+                Carbs: {{ food.nf_total_carbohydrate|floatformat:2 }} g
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Total Nutrition -->
+    <h2>Total Nutrition</h2>
+    <div class="total-nutrition">
+        <p><strong>Total Calories:</strong> {{ total_data.calories|floatformat:2 }} kcal</p>
+        <p><strong>Total Fat:</strong> {{ total_data.fat|floatformat:2 }} g</p>
+        <p><strong>Total Protein:</strong> {{ total_data.protein|floatformat:2 }} g</p>
+        <p><strong>Total Carbs:</strong> {{ total_data.carbs|floatformat:2 }} g</p>
+    </div>
+
+    <!-- Clear List Button -->
+    <form method="get" action="{% url 'clear_list' %}">
+        <button type="submit" class="clear-button">Clear List</button>
+    </form>
+{% endif %}
+    </div>
+</body>
+</html>
